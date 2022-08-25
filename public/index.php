@@ -42,17 +42,17 @@ if (isset($_GET['code'])) {
     curl_setopt($curl, CURLOPT_POST, TRUE);
     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
     curl_setopt($curl, CURLOPT_POSTFIELDS, $postFields);
-    $_SESSION['access_token'] = json_decode(curl_exec($curl), true);
+    $_SESSION['auth'] = json_decode(curl_exec($curl), true);
     $_SESSION['user'] = null;
     header('Location: '.$redirectUri);
     exit();
 }
 
-if (isset($_SESSION['access_token']['access_token']) && empty($_SESSION['user'])) {
+if (isset($_SESSION['auth']['access_token']) && empty($_SESSION['user'])) {
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $profileUri);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $_SESSION['access_token']['access_token']]);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $_SESSION['auth']['access_token']]);
     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
     $_SESSION['user'] = json_decode(curl_exec($curl), true);
     header('Location: '.$redirectUri);
