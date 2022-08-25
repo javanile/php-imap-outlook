@@ -14,3 +14,6 @@ stop:
 
 install:
 	@docker-compose run --rm php composer install
+
+php-imap2:
+	@docker-compose run --rm php composer require javanile/php-imap2

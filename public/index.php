@@ -1,5 +1,9 @@
 <?php
 
+session_start();
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
 $clientId = getenv('MICROSOFT_CLIENT_ID');
 $tenantId = getenv('MICROSOFT_TENANT_ID') ?: 'common';
 $clientSecret = getenv('MICROSOFT_CLIENT_SECRET');
@@ -8,8 +12,11 @@ $redirectUri = getenv('REDIRECT_URI');
 $scopes = [
     'https://outlook.office.com/IMAP.AccessAsUser.All',
     'https://outlook.office.com/POP.AccessAsUser.All',
-    'https://outlook.office.com/SMTP.Send'
+    'https://outlook.office.com/SMTP.Send',
+    'https://graph.microsoft.com/User.Read',
+    'https://graph.microsoft.com/Mail.Read',
 ];
+
 
 $authUri = 'https://login.microsoftonline.com/' . $tenantId
          . '/oauth2/authorize?client_id=' . $clientId
@@ -19,8 +26,8 @@ $authUri = 'https://login.microsoftonline.com/' . $tenantId
          . '&prompt=consent';
 
 $tokenUri = 'https://login.microsoftonline.com/common/oauth2/token';
-$resourceId = 'https://api.office.com/discovery/';
-$accessToken = null;
+$resourceId = 'https://graph.microsoft.com/';
+$profileUri = 'https://graph.microsoft.com/v1.0/me';
 
 if (isset($_GET['code'])) {
     $postFields = 'client_id=' . $clientId
@@ -33,13 +40,28 @@ if (isset($_GET['code'])) {
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $tokenUri);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
+    #curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
     curl_setopt($curl, CURLOPT_POST, TRUE);
     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
     curl_setopt($curl, CURLOPT_POSTFIELDS, $postFields);
-    $response = curl_exec($curl);
-    $accessToken = json_decode($response, true);
+    $_SESSION['access_token'] = json_decode(curl_exec($curl), true);
+    $_SESSION['user'] = null;
+    header('Location: '.$redirectUri);
+    exit();
 }
+
+if (isset($_SESSION['access_token']['access_token']) && empty($_SESSION['user'])) {
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $profileUri);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $_SESSION['access_token']['access_token']]);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+    $_SESSION['user'] = json_decode(curl_exec($curl), true);
+    header('Location: '.$redirectUri);
+    exit();
+}
+
+
 
 ?>
 <!DOCTYPE html>
@@ -57,18 +79,22 @@ if (isset($_GET['code'])) {
     if (!isset($_GET['code'])) {}
     ?>
 
-    <a href="<?=$authUri?>">Login</a>
+    <a href="<?=$authUri?>">Authorize</a>
 
 </p>
 
-<pre>$accessToken = <?php var_dump($accessToken); ?></pre>
+<pre>$_SESSION['access_token'] = <?php var_dump($_SESSION['access_token']); ?></pre>
+
+<pre>$_SESSION['user'] = <?php var_dump($_SESSION['user']); ?></pre>
+
+<?php
+if (isset($accessToken['access_token'])) {
+    $inbox = '{outlook.office365.com:993/imap/ssl}';
+    #$imap = imap2_open($inbox, $);
 
 
-<?php if (isset($accessToken['access_token'])) { ?>
-
-
-
-<?php } ?>
+}
+?>
 
 </body>
 </html>
