@@ -13,4 +13,4 @@ stop:
 	@docker stop $$(docker ps | grep ":8080" | cut -c1-12) > /dev/null 2>&1 || true
 
 install:
-    @docker-compose run --rm php composer install
+	@docker-compose run --rm php composer install

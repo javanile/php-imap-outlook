@@ -1,48 +1,34 @@
 <?php
 
-#require_once __DIR__.'/vendor/autoload.php';
+$clientId = getenv('MICROSOFT_CLIENT_ID');
+$tenantId = getenv('MICROSOFT_TENANT_ID') ?: 'common';
+$clientSecret = getenv('MICROSOFT_CLIENT_SECRET');
+$redirectUri = "http://localhost:8080/";
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-#$dotenv = Dotenv\Dotenv::createImmutable(getcwd());
-#$dotenv->load();
-
-#var_dump($_ENV);
-
-#header('Content-Type: text/html; charset=utf-8');
-$clientId = $_ENV['MICROSOFT_CLIENT_ID'];
-$tenantId = $_ENV['MICROSOFT_TENANT_ID'] ?? 'common';
-$client_secret = $_ENV['MICROSOFT_CLIENT_SECRET'];
-$redirect_uri  = "http://localhost:8080/office365api/index.php";
-
-$scope = explode(',', $_ENV['MICROSOFT_SCOPE']);
+$scope = [
+    'https://outlook.office.com/IMAP.AccessAsUser.All',
+    'https://outlook.office.com/POP.AccessAsUser.All',
+    'https://outlook.office.com/SMTP.Send'
+];
 
 $encodedScope = urlencode(implode(' ', $scope));
 
-$response   = "";
-$response   = "https://login.microsoftonline.com/".$tenantId."/oauth2/authorize?client_id=".$client_id."&scope=".$encodedScope."&response_type=code&redirect_uri=".urlencode($redirect_uri);  //&prompt=consent
+$response = "https://login.microsoftonline.com/".$tenantId."/oauth2/authorize?client_id=".$clientId."&scope=".$encodedScope."&response_type=code&redirect_uri=".urlencode($redirectUri);  //&prompt=consent
 
-
-echo "<h2>office 365 using PHP login</h2>";
-echo "<br>";
-if(!isset($_GET['code']))
-{
+if (!isset($_GET['code'])) {
     echo "LOGIN  :: ";
     echo "<span style='vertical-align: middle;'><a href='".$response."'>LOGIN</a></span>";
 }
 
 
 
-$arraytoreturn = array();
+$arrayToReturn = array();
 $output = "";
-//  Redeem the authorization code for tokens office 365 using PHP
-if(isset($_GET['code']))
-{
+
+if (isset($_GET['code'])) {
     $auth = $_GET['code'];
-    $resource_id = "https://api.office.com/discovery/";
-    $data = "client_id=".$client_id."&redirect_uri=".urlencode($redirect_uri)."&client_secret=".urlencode($client_secret)."&code=".$auth."&grant_type=authorization_code&resource=".$resource_id;
+    $resourceId = "https://api.office.com/discovery/";
+    $data = "client_id=".$clientId."&redirect_uri=".urlencode($redirectUri)."&client_secret=".urlencode($clientSecret)."&code=".$auth."&grant_type=authorization_code&resource=".$resourceId;
     try
     {
         $ch = curl_init();
@@ -61,6 +47,8 @@ if(isset($_GET['code']))
         var_dump($exception);
     }
 
+    var_dump($output);
+
     $out2 = json_decode($output, true);
     $get_access_token = $out2['access_token'];
     $get_refresh_token = $out2['refresh_token'];
@@ -73,3 +61,18 @@ if(isset($_GET['code']))
     echo "access token :: ".$get_access_token."<br>";
     echo "refresh token :: ".$get_refresh_token."<br>";
 }
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<title>Twitter Button</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://www.javanile.org/crisp/css/crisp.css">
+</head>
+<body>
+<h1>PHP IMAP Outlook</h1>
+</body>
+</html>
+
+
