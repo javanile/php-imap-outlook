@@ -3,24 +3,20 @@
 $clientId = getenv('MICROSOFT_CLIENT_ID');
 $tenantId = getenv('MICROSOFT_TENANT_ID') ?: 'common';
 $clientSecret = getenv('MICROSOFT_CLIENT_SECRET');
-$redirectUri = "http://localhost:8080/";
+$redirectUri = getenv('REDIRECT_URI');
 
-$scope = [
+$scopes = [
     'https://outlook.office.com/IMAP.AccessAsUser.All',
     'https://outlook.office.com/POP.AccessAsUser.All',
     'https://outlook.office.com/SMTP.Send'
 ];
 
-$encodedScope = urlencode(implode(' ', $scope));
-
-$response = "https://login.microsoftonline.com/".$tenantId."/oauth2/authorize?client_id=".$clientId."&scope=".$encodedScope."&response_type=code&redirect_uri=".urlencode($redirectUri);  //&prompt=consent
-
-if (!isset($_GET['code'])) {
-    echo "LOGIN  :: ";
-    echo "<span style='vertical-align: middle;'><a href='".$response."'>LOGIN</a></span>";
-}
-
-
+$authUri = 'https://login.microsoftonline.com/' . $tenantId
+         . '/oauth2/authorize?client_id=' . $clientId
+         . '&scope=' . urlencode(implode(' ', $scopes))
+         . '&redirect_uri=' . urlencode($redirectUri)
+         . '&response_type=code'
+         . '&prompt=consent';
 
 $arrayToReturn = array();
 $output = "";
@@ -66,12 +62,21 @@ if (isset($_GET['code'])) {
 <!DOCTYPE html>
 <html lang="en">
 <meta charset="UTF-8">
-<title>Twitter Button</title>
+<title>PHP IMAP Outlook</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="stylesheet" href="https://www.javanile.org/crisp/css/crisp.css">
 </head>
 <body>
 <h1>PHP IMAP Outlook</h1>
+<p>
+    <?php
+    if (true)
+    if (!isset($_GET['code'])) {}
+    ?>
+
+    <a href="<?=$authUri?>">Login</a>
+
+</p>
 </body>
 </html>
 
