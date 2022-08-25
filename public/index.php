@@ -17,7 +17,6 @@ $scopes = [
     'https://graph.microsoft.com/Mail.Read',
 ];
 
-
 $authUri = 'https://login.microsoftonline.com/' . $tenantId
          . '/oauth2/authorize?client_id=' . $clientId
          . '&scope=' . urlencode(implode(' ', $scopes))
@@ -40,7 +39,6 @@ if (isset($_GET['code'])) {
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $tokenUri);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-    #curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
     curl_setopt($curl, CURLOPT_POST, TRUE);
     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
     curl_setopt($curl, CURLOPT_POSTFIELDS, $postFields);
@@ -60,8 +58,6 @@ if (isset($_SESSION['access_token']['access_token']) && empty($_SESSION['user'])
     header('Location: '.$redirectUri);
     exit();
 }
-
-
 
 ?>
 <!DOCTYPE html>
@@ -83,10 +79,6 @@ if (isset($_SESSION['access_token']['access_token']) && empty($_SESSION['user'])
 
 </p>
 
-<pre>$_SESSION['access_token'] = <?php var_dump($_SESSION['access_token']); ?></pre>
-
-<pre>$_SESSION['user'] = <?php var_dump($_SESSION['user']); ?></pre>
-
 <?php
 if (isset($accessToken['access_token'])) {
     $inbox = '{outlook.office365.com:993/imap/ssl}';
@@ -95,6 +87,10 @@ if (isset($accessToken['access_token'])) {
 
 }
 ?>
+
+<pre>$_SESSION['access_token'] = <?php var_dump($_SESSION['access_token']); ?></pre>
+
+<pre>$_SESSION['user'] = <?php var_dump($_SESSION['user']); ?></pre>
 
 </body>
 </html>
