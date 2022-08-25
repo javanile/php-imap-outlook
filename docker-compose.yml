@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  php:
+    build: .
+    image: javanile/webrequest
+    env_file:
+      - .env
+    ports:
+      - '8080:80'
+    volumes:
+      - ./:/var/www/html
