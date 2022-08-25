@@ -80,11 +80,13 @@ if (isset($_SESSION['auth']['access_token']) && empty($_SESSION['user'])) {
 </p>
 
 <?php
-if (isset($accessToken['access_token'])) {
+if (isset($_SESSION['auth']['access_token'])) {
     $inbox = '{outlook.office365.com:993/imap/ssl}';
-    #$imap = imap2_open($inbox, $);
-
-
+    $username = $_SESSION['user']['mail'];
+    $accessToken = $_SESSION['auth']['access_token'];
+    $imap = imap2_open($inbox, $username, $accessToken, OP_XOAUTH2);
+    $info = imap2_mailboxmsginfo($imap);
+    var_dump($info);
 }
 ?>
 
