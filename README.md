@@ -1,1 +1,1 @@
-# php-imap-outlook
+# PHP IMAP Outlook
