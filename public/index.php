@@ -18,44 +18,27 @@ $authUri = 'https://login.microsoftonline.com/' . $tenantId
          . '&response_type=code'
          . '&prompt=consent';
 
-$arrayToReturn = array();
-$output = "";
+$tokenUri = 'https://login.microsoftonline.com/common/oauth2/token';
+$resourceId = 'https://api.office.com/discovery/';
+$accessToken = null;
 
 if (isset($_GET['code'])) {
-    $auth = $_GET['code'];
-    $resourceId = "https://api.office.com/discovery/";
-    $data = "client_id=".$clientId."&redirect_uri=".urlencode($redirectUri)."&client_secret=".urlencode($clientSecret)."&code=".$auth."&grant_type=authorization_code&resource=".$resourceId;
-    try
-    {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://login.microsoftonline.com/common/oauth2/token");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Content-Type: application/x-www-form-urlencoded',
-        ));
-        curl_setopt($ch, CURLOPT_POST, TRUE);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        $output = curl_exec($ch);
-    }
-    catch (Exception $exception)
-    {
-        var_dump($exception);
-    }
+    $postFields = 'client_id=' . $clientId
+                . '&redirect_uri=' . urlencode($redirectUri)
+                . '&client_secret=' . urlencode($clientSecret)
+                . '&code=' . $_GET['code']
+                . '&resource=' . urlencode($resourceId)
+                . '&grant_type=authorization_code';
 
-    var_dump($output);
-
-    $out2 = json_decode($output, true);
-    $get_access_token = $out2['access_token'];
-    $get_refresh_token = $out2['refresh_token'];
-    $arraytoreturn = Array(
-        'access_token' => $out2['access_token'],
-        'refresh_token' => $out2['refresh_token'],
-        'expires_in' => $out2['expires_in']
-    );
-    echo "Get access toke and refresh token in office 365 using PHP<br>";
-    echo "access token :: ".$get_access_token."<br>";
-    echo "refresh token :: ".$get_refresh_token."<br>";
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $tokenUri);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
+    curl_setopt($curl, CURLOPT_POST, TRUE);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $postFields);
+    $response = curl_exec($curl);
+    $accessToken = json_decode($response, true);
 }
 
 ?>
@@ -77,7 +60,15 @@ if (isset($_GET['code'])) {
     <a href="<?=$authUri?>">Login</a>
 
 </p>
+
+<pre>$accessToken = <?php var_dump($accessToken); ?></pre>
+
+
+<?php if (isset($accessToken['access_token'])) { ?>
+
+
+
+<?php } ?>
+
 </body>
 </html>
-
-
