@@ -17,3 +17,8 @@ install:
 
 php-imap2:
 	@docker-compose run --rm php composer require javanile/php-imap2
+
+release:
+	git add .
+	git commit -am "Release"
+	git push heroku main
