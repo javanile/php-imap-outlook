@@ -77,7 +77,7 @@ if (isset($_SESSION['auth']['access_token']) && empty($_SESSION['user'])) {
 
     <center>
     <button onclick="window.location='<?=$authUri?>'">
-        <img height="24" width="24" style="vertical-align:middle" src="/logo.svg" />
+        <img height="24" width="24" style="vertical-align:middle" src="/microsoft.svg" />
         Sign in with Microsoft
     </button>
     </center>
