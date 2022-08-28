@@ -21,4 +21,5 @@ php-imap2:
 release:
 	git add .
 	git commit -am "Release"
+	git push
 	git push heroku main
