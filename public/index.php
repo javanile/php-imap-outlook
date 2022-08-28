@@ -25,8 +25,8 @@ $authUri = 'https://login.microsoftonline.com/' . $tenantId
          . '&prompt=consent';
 
 $tokenUri = 'https://login.microsoftonline.com/common/oauth2/token';
-$resourceId = 'https://graph.microsoft.com/';
 $profileUri = 'https://graph.microsoft.com/v1.0/me';
+$resourceId = 'https://graph.microsoft.com/';
 
 if (isset($_GET['code'])) {
     $postFields = 'client_id=' . $clientId
@@ -75,8 +75,12 @@ if (isset($_SESSION['auth']['access_token']) && empty($_SESSION['user'])) {
     if (!isset($_GET['code'])) {}
     ?>
 
-    <a href="<?=$authUri?>">Authorize</a>
-
+    <center>
+    <button onclick="window.location='<?=$authUri?>'">
+        <img height="24" width="24" style="vertical-align:middle" src="/logo.svg" />
+        Sign in with Microsoft
+    </button>
+    </center>
 </p>
 
 <?php
@@ -90,10 +94,13 @@ if (isset($_SESSION['auth']['access_token'])) {
 }
 ?>
 
-<pre>$_SESSION['access_token'] = <?php var_dump($_SESSION['access_token']); ?></pre>
+<?php if (isset($_SESSION['auth'])) { ?>
+    <pre>$_SESSION['auth'] = <?php var_dump($_SESSION['auth']); ?></pre>
+<?php } ?>
 
-<pre>$_SESSION['user'] = <?php var_dump($_SESSION['user']); ?></pre>
-
+<?php if (isset($_SESSION['user'])) { ?>
+    <pre>$_SESSION['user'] = <?php var_dump($_SESSION['user']); ?></pre>
+<?php } ?>
 
 <a href="https://github.com/javanile/php-imap-outlook" target="_blank"><img src="https://github.blog/wp-content/uploads/2008/12/forkme_right_green_007200.png?resize=149%2C149" style="position:absolute;top:0;right:0;border:0;" width="149" height="149" class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1" /></a>
 </body>
