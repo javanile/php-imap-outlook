@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ca6238488db33a99657301a32218f852",
+    "content-hash": "4f0ca5b6a4d06f321fff6f016bb5a6b0",
     "packages": [
         {
             "name": "guzzlehttp/psr7",
@@ -123,19 +123,21 @@
         },
         {
             "name": "javanile/php-imap2",
-            "version": "0.1.7",
+            "version": "0.1.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/javanile/php-imap2.git",
-                "reference": "078e1e26dbd96b05ff10143688353dc365f068cf"
+                "reference": "2d2446da4b4aee959db0bcf69318207f814cf0ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/javanile/php-imap2/zipball/078e1e26dbd96b05ff10143688353dc365f068cf",
-                "reference": "078e1e26dbd96b05ff10143688353dc365f068cf",
+                "url": "https://api.github.com/repos/javanile/php-imap2/zipball/2d2446da4b4aee959db0bcf69318207f814cf0ef",
+                "reference": "2d2446da4b4aee959db0bcf69318207f814cf0ef",
                 "shasum": ""
             },
             "require": {
+                "ext-mbstring": "*",
+                "php": ">=7.0",
                 "zbateson/mail-mime-parser": "^2.2"
             },
             "require-dev": {
@@ -144,8 +146,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "javanile/webrequest",
-                    "url": "https://github.com/javanile/webrequest"
+                    "name": "Roundcube",
+                    "url": "https://github.com/roundcube"
                 }
             },
             "autoload": {
@@ -166,20 +168,23 @@
                     "homepage": "https://github.com/francescobianco"
                 }
             ],
-            "description": "Implement no-code input function for PHP",
-            "homepage": "https://github.com/javanile/php-inpuy",
+            "description": "PHP IMAP with OAUTH2",
+            "homepage": "https://github.com/javanile/php-imap2",
             "keywords": [
-                "input",
-                "lowcode",
-                "nocode",
-                "web3",
-                "webrequest"
+                "exchange",
+                "gmail",
+                "google",
+                "imap",
+                "microsoft",
+                "oauth",
+                "oauth2",
+                "outlook"
             ],
             "support": {
                 "issues": "https://github.com/javanile/php-imap2/issues",
-                "source": "https://github.com/javanile/php-imap2/tree/0.1.7"
+                "source": "https://github.com/javanile/php-imap2/tree/0.1.8"
             },
-            "time": "2022-07-06T01:19:42+00:00"
+            "time": "2022-09-05T16:22:09+00:00"
         },
         {
             "name": "pimple/pimple",
