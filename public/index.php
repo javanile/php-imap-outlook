@@ -22,13 +22,15 @@ $authUri = 'https://login.microsoftonline.com/' . $tenantId
          . '&response_type=code'
          . '&approval_prompt=auto';
 
-$tokenUri = 'https://login.microsoftonline.com/common/oauth2/token';
+$tokenUri = 'https://login.microsoftonline.com/'.$tenantId.'/oauth2/v2.0/token';
 
 if (isset($_GET['code'])) {
+    #var_dump($_GET);
+    #die();
     $postFields = 'client_id=' . $clientId
                 . '&redirect_uri=' . urlencode($redirectUri)
                 . '&client_secret=' . urlencode($clientSecret)
-                . '&code=' . $_GET['code']
+                . '&code=' . urlencode($_GET['code'])
                 . '&grant_type=authorization_code';
 
     $curl = curl_init();
@@ -38,15 +40,15 @@ if (isset($_GET['code'])) {
     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
     curl_setopt($curl, CURLOPT_POSTFIELDS, $postFields);
     $_SESSION['auth'] = json_decode(curl_exec($curl), true);
-    $_SESSION['user'] = null;
+    $_SESSION['user'] = nTull;
     header('Location: '.$redirectUri);
     exit();
 }
 
 if (isset($_SESSION['auth']['access_token']) && empty($_SESSION['user'])) {
-    $_SESSION['user'] = json_decode(base64_decode(explode('.', $_SESSION['auth']['access_token'])[1]), true);
-    header('Location: '.$redirectUri);
-    exit();
+    #$_SESSION['user'] = json_decode(base64_decode(explode('.', $_SESSION['auth']['access_token'])[1]), true);
+    #header('Location: '.$redirectUri);
+    #exit();
 }
 
 ?>
@@ -78,8 +80,8 @@ if (isset($_SESSION['auth']['access_token'])) {
     $inbox = '{outlook.office365.com:993/imap/ssl}';
     $username = $_SESSION['user']['unique_name'];
     $accessToken = $_SESSION['auth']['access_token'];
-    $imap = imap2_open($inbox, $username, $accessToken, OP_XOAUTH2);
-    $info = imap2_mailboxmsginfo($imap);
+    #$imap = imap2_open($inbox, $username, $accessToken, OP_XOAUTH2);
+    #$info = imap2_mailboxmsginfo($imap);
 }
 ?>
 
