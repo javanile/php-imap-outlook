@@ -10,30 +10,25 @@ $clientSecret = getenv('MICROSOFT_CLIENT_SECRET');
 $redirectUri = getenv('REDIRECT_URI');
 
 $scopes = [
+    'offline_access',
     'https://outlook.office.com/IMAP.AccessAsUser.All',
-    'https://outlook.office.com/POP.AccessAsUser.All',
     'https://outlook.office.com/SMTP.Send',
-    'https://graph.microsoft.com/User.Read',
-    'https://graph.microsoft.com/Mail.Read',
 ];
 
 $authUri = 'https://login.microsoftonline.com/' . $tenantId
-         . '/oauth2/authorize?client_id=' . $clientId
+         . '/oauth2/v2.0/authorize?client_id=' . $clientId
          . '&scope=' . urlencode(implode(' ', $scopes))
          . '&redirect_uri=' . urlencode($redirectUri)
          . '&response_type=code'
-         . '&prompt=consent';
+         . '&approval_prompt=auto';
 
 $tokenUri = 'https://login.microsoftonline.com/common/oauth2/token';
-$profileUri = 'https://graph.microsoft.com/v1.0/me';
-$resourceId = 'https://graph.microsoft.com/';
 
 if (isset($_GET['code'])) {
     $postFields = 'client_id=' . $clientId
                 . '&redirect_uri=' . urlencode($redirectUri)
                 . '&client_secret=' . urlencode($clientSecret)
                 . '&code=' . $_GET['code']
-                . '&resource=' . urlencode($resourceId)
                 . '&grant_type=authorization_code';
 
     $curl = curl_init();
@@ -49,12 +44,7 @@ if (isset($_GET['code'])) {
 }
 
 if (isset($_SESSION['auth']['access_token']) && empty($_SESSION['user'])) {
-    $curl = curl_init();
-    curl_setopt($curl, CURLOPT_URL, $profileUri);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $_SESSION['auth']['access_token']]);
-    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-    $_SESSION['user'] = json_decode(curl_exec($curl), true);
+    $_SESSION['user'] = json_decode(base64_decode(explode('.', $_SESSION['auth']['access_token'])[1]), true);
     header('Location: '.$redirectUri);
     exit();
 }
@@ -86,13 +76,16 @@ if (isset($_SESSION['auth']['access_token']) && empty($_SESSION['user'])) {
 <?php
 if (isset($_SESSION['auth']['access_token'])) {
     $inbox = '{outlook.office365.com:993/imap/ssl}';
-    $username = $_SESSION['user']['mail'];
+    $username = $_SESSION['user']['unique_name'];
     $accessToken = $_SESSION['auth']['access_token'];
     $imap = imap2_open($inbox, $username, $accessToken, OP_XOAUTH2);
     $info = imap2_mailboxmsginfo($imap);
-    var_dump($info);
 }
 ?>
+
+<?php if (isset($info)) { ?>
+    <pre>$info = <?php var_dump($info); ?></pre>
+<?php } ?>
 
 <?php if (isset($_SESSION['auth'])) { ?>
     <pre>$_SESSION['auth'] = <?php var_dump($_SESSION['auth']); ?></pre>
