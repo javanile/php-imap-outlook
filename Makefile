@@ -19,6 +19,7 @@ php-imap2:
 	@docker-compose run --rm php composer require javanile/php-imap2:0.1.8
 
 release:
+	# Release 1
 	git add .
 	git commit -am "Release"
 	git push
